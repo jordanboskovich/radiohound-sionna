@@ -1,0 +1,9 @@
+simple_scene/
+*.ply
+*.tmp
+__pycache__/
+*.pyc
+dataset_v2/
+dataset_v3/
+*.o*
+*.e*
