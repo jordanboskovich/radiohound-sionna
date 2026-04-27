@@ -259,12 +259,3 @@ Jobs are configured to email `jboskovi@nd.edu` on start, finish, or abort (`-m a
 **Some sensor positions fall inside buildings:** The uniform sensor grid does not account for building locations. Samples where the sensor is inside a building are physically unrealistic but are included in the dataset. These can be filtered in post-processing.
 
 **dataset_v2 road artifact:** The `dataset_v2` dataset was generated with road meshes included in the scene. Coverage maps in this dataset show unrealistic dead zones along walkways. Use `dataset_v3` for clean data.
-
----
-
-## Next Steps
-
-1. **Validate against real data** — deploy RadioHound sensors on the Notre Dame quad and compare measured coverage against simulated coverage maps
-2. **Classical baselines** — implement greedy algorithm approach to the coverage maximization problem to obtain a baseline for comparison
-3. **Neural network** — train a CNN to predict optimal sensor placements from coverage maps
-4. **Scale dataset** — generate data from additional campus areas and sensor heights to improve generalization
