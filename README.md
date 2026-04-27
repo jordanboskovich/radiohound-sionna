@@ -27,13 +27,13 @@ sionna_osm_scene/
 ├── ND-Simulation.ipynb         # Single-sensor simulation and visualization
 ├── Dataset-Gen.ipynb           # Dataset generation (Jupyter version)
 ├── Dataset-Visualization.ipynb # Dataset visualization notebook
+├── Location-Visualization.ipynb# Location/scene visualization notebook
 ├── dataset_v2/
 │   ├── dataset_gen_3m.py       # Dataset generation script, 3m resolution
 │   ├── dataset_gen_1m.py       # Dataset generation script, 1m resolution
 │   ├── submit_3m.sh            # CRC job submission script, 3m
 │   ├── submit_1m.sh            # CRC job submission script, 1m
-│   ├── dataset_3m/             # Saved NPZ samples, 3m resolution
-│   └── dataset_1m/             # Saved NPZ samples, 1m resolution
+│   └── Visualization.ipynb     # Jupyter Notebook to visualize sample coverage maps
 ├── dataset_v3/                 # Same structure as v2, roads removed from scene
 ├── simple_scene/
 │   ├── NOTRE_DAME_2_.../       # Scene with roads (used for dataset_v2)
