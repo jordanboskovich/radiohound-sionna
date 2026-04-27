@@ -10,7 +10,7 @@
 
 The RadioHound project aims to deploy RF sensors around the Notre Dame campus to detect nearby emitters and map frequency usage across different bands.
 
-This repository documents the first phase of a sensor placement optimization project. Given a limited number of RadioHound sensors, the goal is to find placement configurations that maximize spatial coverage — i.e., the area from which an emitter can be detected. This dataset is a stepping stone toward two things:
+This repository documents the first phase of a sensor placement optimization project. Given a limited number of RadioHound sensors, the goal is to find placement configurations that maximize spatial coverage, i.e., the area from which an emitter can be detected. This dataset is a stepping stone toward two things:
 
 1. **Training a neural network** to predict optimal sensor placements given a coverage objective
 2. **Validation against real-world data** by comparing simulated coverage maps against measurements collected by physically deploying RadioHound sensors on the Notre Dame Debartolo quad
@@ -72,14 +72,14 @@ The 3D scene is generated from OpenStreetMap data using the `OSM_to_Sionna.ipynb
 
 ### Bounding Box
 
-The scene covers the following area of Notre Dame's campus (God Quad / DeBartolo area):
+The scene covers the following area of Notre Dame's campus (DeBartolo/Mendoza area):
 
 ```python
 west, east = -86.23842196322462, -86.23573245290231
 south, north = 41.69701511660061, 41.69996986433866
 ```
 
-This corresponds to approximately 210m × 328m. All scene coordinates are in meters, centered at the scene's centroid.
+This corresponds to approximately 210m × 328m. All scene coordinates are in meters.
 
 ### Coordinate Reference System
 
@@ -107,12 +107,20 @@ level_overrides = {
 ```
 
 Buildings without a name or override default to 14m (~4 stories).
+Not all the buildings listed above are included in the current Debartolo Quad scene. The complete list of buildings for the current scene is: 
+
+- Fitzpatrick Hall of Engineering
+- Notre Dame Law School
+- McKenna Hall
+- Stinson-Remick Hall of Engineering
+- DeBartolo Hall
+- Mendoza College of Business
 
 ### Roads
 
 The original scene included road meshes generated from OSM road network data. These were extruded 0.25m above ground level. This caused a significant artifact: receiver points placed at z=0 fell below the road surface, causing Sionna's ray tracer to treat the road mesh as an obstacle. This produced unrealistic dead zones along every walkway in the scene.
 
-**Fix:** Road meshes are excluded from the scene XML entirely. The road mesh files are still generated but not added to the scene. This is controlled in `OSM_to_Sionna.ipynb` — the `ET.SubElement` calls that add roads to the XML are commented out.
+**Fix:** Road meshes are excluded from the scene XML entirely. The road mesh files are still generated, but not added to the scene. This is controlled in `OSM_to_Sionna.ipynb` — the `ET.SubElement` calls that add roads to the XML are commented out.
 
 The `dataset_v2` dataset was generated **with** roads (affected by this artifact). The `dataset_v3` dataset was generated **without** roads and is the preferred dataset.
 
@@ -145,7 +153,7 @@ Before generating the full dataset, individual sensor simulations can be run usi
 
 ### How RSS is Computed
 
-Sionna traces rays from the transmitter and accumulates contributions from all paths that reach each receiver — direct line-of-sight, reflections off buildings, and diffractions around edges. The total received power is the sum of squared magnitudes of the complex channel coefficients across all paths. This is then converted to dBm and compared against the detection threshold to produce a binary coverage map.
+Sionna traces rays from the transmitter and accumulates contributions from all paths that reach each receiver — direct line-of-sight, reflections off buildings, and diffractions around edges. The total received power is the sum of the squared magnitudes of the complex channel coefficients across all paths. This is then converted to dBm and compared against the detection threshold to produce a binary coverage map.
 
 The reciprocity of RF propagation means this is equivalent to asking: if a drone (emitter) is at each grid point, can the sensor (receiver) detect it?
 
@@ -224,7 +232,7 @@ qsub submit_1m.sh   # 1m resolution job
 ### Monitoring
 
 ```bash
-qstat -u jboskovi                    # check job status
+qstat -u netid                      # check job status
 cat ~/sionna_3m.o[job_id]           # view output log
 ```
 
@@ -238,6 +246,7 @@ cat ~/sionna_3m.o[job_id]           # view output log
 ```
 
 Jobs are configured to email `jboskovi@nd.edu` on start, finish, or abort (`-m abe`).
+**When using, replace with own email / netid**
 
 ---
 
@@ -249,8 +258,6 @@ Jobs are configured to email `jboskovi@nd.edu` on start, finish, or abort (`-m a
 
 **Some sensor positions fall inside buildings:** The uniform sensor grid does not account for building locations. Samples where the sensor is inside a building are physically unrealistic but are included in the dataset. These can be filtered in post-processing.
 
-**49-sample legacy dataset:** An earlier JSON-format dataset of 49 samples exists in the repository from early testing. This dataset used a coarser 7×7 sensor grid and is superseded by the NPZ datasets in `dataset_v2` and `dataset_v3`.
-
 **dataset_v2 road artifact:** The `dataset_v2` dataset was generated with road meshes included in the scene. Coverage maps in this dataset show unrealistic dead zones along walkways. Use `dataset_v3` for clean data.
 
 ---
@@ -258,6 +265,6 @@ Jobs are configured to email `jboskovi@nd.edu` on start, finish, or abort (`-m a
 ## Next Steps
 
 1. **Validate against real data** — deploy RadioHound sensors on the Notre Dame quad and compare measured coverage against simulated coverage maps
-2. **Classical baselines** — implement greedy algorithm, simulated annealing, and genetic algorithm approaches to the coverage maximization problem
+2. **Classical baselines** — implement greedy algorithm approach to the coverage maximization problem to obtain a baseline for comparison
 3. **Neural network** — train a CNN to predict optimal sensor placements from coverage maps
 4. **Scale dataset** — generate data from additional campus areas and sensor heights to improve generalization
