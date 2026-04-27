@@ -1,4 +1,3 @@
-simple_scene/
 *.ply
 *.tmp
 __pycache__/
